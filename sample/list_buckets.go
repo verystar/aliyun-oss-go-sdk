@@ -3,7 +3,7 @@ package sample
 import (
 	"fmt"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // ListBucketsSample shows the list bucket, including default and specified parameters.
@@ -33,7 +33,7 @@ func ListBucketsSample() {
 	for _, bucket := range lbr.Buckets {
 		err = client.DeleteBucket(bucket.Name)
 		if err != nil {
-			//HandleError(err)
+			// HandleError(err)
 		}
 	}
 

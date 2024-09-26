@@ -2,8 +2,9 @@ package sample
 
 import (
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"os"
+
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 func BucketMetaQuerySample() {
@@ -63,7 +64,7 @@ func BucketMetaQuerySample() {
 		}
 	}
 
-	//2. Aggregate query
+	// 2. Aggregate query
 
 	query = oss.MetaQuery{
 		NextToken:  "",
@@ -95,7 +96,7 @@ func BucketMetaQuerySample() {
 	for _, aggregation := range queryResult.Aggregations {
 		fmt.Printf("Aggregation Field:%s\n", aggregation.Field)
 		fmt.Printf("Aggregation Operation:%s\n", aggregation.Operation)
-		fmt.Printf("Aggregation Value:%d\n", aggregation.Value)
+		fmt.Printf("Aggregation Value:%f\n", aggregation.Value)
 		for _, group := range aggregation.Groups {
 			fmt.Printf("Group Value:%s\n", group.Value)
 			fmt.Printf("Group Count:%d\n", group.Count)
@@ -143,7 +144,7 @@ func BucketMetaQuerySample() {
 		}
 	}
 
-	//4.Do Meta query use xml
+	// 4.Do Meta query use xml
 	xml := `<?xml version="1.0" encoding="UTF-8"?>
 <MetaQuery>
   <NextToken></NextToken>

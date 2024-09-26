@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -21,7 +20,6 @@ import (
 // options    object's contraints. Check out function InitiateMultipartUpload.
 //
 // error    it's nil if the operation succeeds, otherwise it's an error object.
-//
 func (bucket Bucket) CopyFile(srcBucketName, srcObjectKey, destObjectKey string, partSize int64, options ...Option) error {
 	destBucketName := bucket.BucketName
 	if partSize < MinPartSize || partSize > MaxPartSize {
@@ -276,7 +274,7 @@ func (cp copyCheckpoint) isValid(meta http.Header) (bool, error) {
 
 // load loads from the checkpoint file
 func (cp *copyCheckpoint) load(filePath string) error {
-	contents, err := ioutil.ReadFile(filePath)
+	contents, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -312,7 +310,7 @@ func (cp *copyCheckpoint) dump(filePath string) error {
 	}
 
 	// Dump
-	return ioutil.WriteFile(filePath, js, FilePermMode)
+	return os.WriteFile(filePath, js, FilePermMode)
 }
 
 // todoParts returns unfinished parts

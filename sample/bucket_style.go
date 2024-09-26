@@ -2,7 +2,7 @@ package sample
 
 import (
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketStyleSample shows how to set,get list and delete the bucket's style.

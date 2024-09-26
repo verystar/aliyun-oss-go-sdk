@@ -4,12 +4,12 @@ package sample
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // AppendObjectSample shows the append file's usage
@@ -43,7 +43,7 @@ func AppendObjectSample() {
 	if err != nil {
 		HandleError(err)
 	}
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		HandleError(err)
@@ -74,7 +74,7 @@ func AppendObjectSample() {
 	if err != nil {
 		HandleError(err)
 	}
-	data, err = ioutil.ReadAll(body)
+	data, err = io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		HandleError(err)
@@ -122,13 +122,13 @@ func AppendObjectSample() {
 		oss.ObjectACL(oss.ACLPublicRead),
 		oss.Meta("myprop", "mypropval")}
 	nextPos = 0
-	fd.Seek(0, os.SEEK_SET)
+	fd.Seek(0, io.SeekStart)
 	nextPos, err = bucket.AppendObject(objectKey, strings.NewReader(str), nextPos, options...)
 	if err != nil {
 		HandleError(err)
 	}
 	// Second append
-	fd.Seek(0, os.SEEK_SET)
+	fd.Seek(0, io.SeekStart)
 	nextPos, err = bucket.AppendObject(objectKey, strings.NewReader(str), nextPos)
 	if err != nil {
 		HandleError(err)

@@ -10,7 +10,6 @@ import (
 	"hash"
 	"hash/crc64"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -107,7 +106,7 @@ func (bucket Bucket) DoPutObject(request *PutObjectRequest, options []Option) (*
 		}
 	}
 	err = CheckRespCode(resp.StatusCode, []int{http.StatusOK})
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 	if len(body) > 0 {
 		if err != nil {
 			err = tryConvertServiceError(body, resp, err)
@@ -242,7 +241,7 @@ func (bucket Bucket) DoGetObject(request *GetObjectRequest, options []Option) (*
 func (bucket Bucket) CopyObject(srcObjectKey, destObjectKey string, options ...Option) (CopyObjectResult, error) {
 	var out CopyObjectResult
 
-	//first find version id
+	// first find version id
 	versionIdKey := "versionId"
 	versionId, _ := FindOption(options, versionIdKey, nil)
 	if versionId == nil {
@@ -297,7 +296,7 @@ func (bucket Bucket) CopyObjectFrom(srcBucketName, srcObjectKey, destObjectKey s
 func (bucket Bucket) copy(srcObjectKey, destBucketName, destObjectKey string, options ...Option) (CopyObjectResult, error) {
 	var out CopyObjectResult
 
-	//first find version id
+	// first find version id
 	versionIdKey := "versionId"
 	versionId, _ := FindOption(options, versionIdKey, nil)
 	if versionId == nil {
@@ -533,7 +532,7 @@ func (bucket Bucket) DeleteMultipleObjectsXml(xmlData string, options ...Option)
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	out := string(body)
 	return out, err
 }
@@ -703,7 +702,7 @@ func (bucket Bucket) GetObjectDetailedMeta(objectKey string, options ...Option) 
 func (bucket Bucket) GetObjectMeta(objectKey string, options ...Option) (http.Header, error) {
 	params, _ := GetRawParams(options)
 	params["objectMeta"] = nil
-	//resp, err := bucket.do("GET", objectKey, "?objectMeta", "", nil, nil, nil)
+	// resp, err := bucket.do("GET", objectKey, "?objectMeta", "", nil, nil, nil)
 	resp, err := bucket.do("HEAD", objectKey, params, options, nil, nil)
 	if err != nil {
 		return nil, err

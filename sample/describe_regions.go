@@ -2,10 +2,10 @@ package sample
 
 import (
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
-//DescribeRegionsSample shows how to get or list describe regions
+// DescribeRegionsSample shows how to get or list describe regions
 func DescribeRegionsSample() {
 	// Create archive bucket
 	client, err := oss.New(endpoint, accessID, accessKey)

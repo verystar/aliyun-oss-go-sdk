@@ -3,7 +3,7 @@ package oss
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -78,7 +78,7 @@ func CheckCallbackResp(resp *Response) error {
 	contentLength, _ := strconv.Atoi(contentLengthStr)
 	var bodyBytes []byte
 	if contentLength > 0 {
-		bodyBytes, _ = ioutil.ReadAll(resp.Body)
+		bodyBytes, _ = io.ReadAll(resp.Body)
 	}
 	if len(bodyBytes) > 0 {
 		srvErr, errIn := serviceErrFromXML(bodyBytes, resp.StatusCode,

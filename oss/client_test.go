@@ -1,14 +1,10 @@
-// client test
-// use gocheck, install gocheck to execute "go get gopkg.in/check.v1",
-// see https://labix.org/gocheck
-
 package oss
 
 import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/rand"
 	"net"
@@ -272,7 +268,7 @@ func (s *OssClientSuite) TestCreateBucket(c *C) {
 	client.DeleteBucket(bucketNameTest)
 	err = client.CreateBucket(bucketNameTest)
 	c.Assert(err, IsNil)
-	//sleep 3 seconds after create bucket
+	// sleep 3 seconds after create bucket
 	time.Sleep(timeoutInOperation)
 
 	// verify bucket is exist
@@ -378,7 +374,7 @@ func (s *OssClientSuite) TestCreateBucketWithServerEncryption(c *C) {
 	client.DeleteBucket(bucketNameTest)
 	err = client.CreateBucket(bucketNameTest, ServerSideEncryption("KMS"), ServerSideDataEncryption("SM4"))
 	c.Assert(err, IsNil)
-	//sleep 3 seconds after create bucket
+	// sleep 3 seconds after create bucket
 	time.Sleep(timeoutInOperation)
 
 	// verify bucket is exist
@@ -836,7 +832,7 @@ func (s *OssClientSuite) TestSetBucketLifecycleNew(c *C) {
 	err = client.CreateBucket(bucketNameTest)
 	c.Assert(err, IsNil)
 
-	//invalid status of lifecyclerule
+	// invalid status of lifecyclerule
 	expiration := LifecycleExpiration{
 		Days: 30,
 	}
@@ -850,7 +846,7 @@ func (s *OssClientSuite) TestSetBucketLifecycleNew(c *C) {
 	err = client.SetBucketLifecycle(bucketNameTest, rules)
 	c.Assert(err, NotNil)
 
-	//invalid value of CreatedBeforeDate
+	// invalid value of CreatedBeforeDate
 	expiration = LifecycleExpiration{
 		CreatedBeforeDate: RandStr(10),
 	}
@@ -864,7 +860,7 @@ func (s *OssClientSuite) TestSetBucketLifecycleNew(c *C) {
 	err = client.SetBucketLifecycle(bucketNameTest, rules)
 	c.Assert(err, NotNil)
 
-	//invalid value of Days
+	// invalid value of Days
 	abortMPU := LifecycleAbortMultipartUpload{
 		Days: -30,
 	}
@@ -1115,7 +1111,7 @@ func (s *OssClientSuite) TestSetBucketLifecycleOverLap(c *C) {
 	err = client.SetBucketLifecycle(bucketNameTest, rules)
 	c.Assert(err, NotNil)
 
-	//enable overlap,error
+	// enable overlap,error
 	options := []Option{AllowSameActionOverLap(true)}
 	err = client.SetBucketLifecycle(bucketNameTest, rules, options...)
 	c.Assert(err, IsNil)
@@ -1345,14 +1341,14 @@ func (s *OssClientSuite) TestDeleteBucketLifecycle(c *C) {
 
 	err = client.CreateBucket(bucketNameTest)
 	c.Assert(err, IsNil)
-	//time.Sleep(timeoutInOperation)
+	// time.Sleep(timeoutInOperation)
 
 	err = client.DeleteBucketLifecycle(bucketNameTest)
 	c.Assert(err, IsNil)
 
 	err = client.SetBucketLifecycle(bucketNameTest, rules)
 	c.Assert(err, IsNil)
-	//time.Sleep(timeoutInOperation)
+	// time.Sleep(timeoutInOperation)
 
 	res, err := client.GetBucketLifecycle(bucketNameTest)
 	c.Assert(err, IsNil)
@@ -1362,12 +1358,12 @@ func (s *OssClientSuite) TestDeleteBucketLifecycle(c *C) {
 	err = client.DeleteBucketLifecycle(bucketNameTest)
 	c.Assert(err, IsNil)
 
-	//time.Sleep(timeoutInOperation)
+	// time.Sleep(timeoutInOperation)
 	res, err = client.GetBucketLifecycle(bucketNameTest)
 	c.Assert(err, NotNil)
 
 	// Eliminate effect of cache
-	//time.Sleep(timeoutInOperation)
+	// time.Sleep(timeoutInOperation)
 
 	// Delete when not set
 	err = client.DeleteBucketLifecycle(bucketNameTest)
@@ -2801,11 +2797,11 @@ func (s *OssClientSuite) TestHttpLogNotSignUrl(c *C) {
 	f.Close()
 
 	// read log file,get http info
-	contents, err := ioutil.ReadFile(logName)
+	contents, err := os.ReadFile(logName)
 	c.Assert(err, IsNil)
 
 	httpContent := string(contents)
-	//fmt.Println(httpContent)
+	// fmt.Println(httpContent)
 
 	c.Assert(strings.Contains(httpContent, "signStr"), Equals, true)
 	c.Assert(strings.Contains(httpContent, "Method:"), Equals, true)
@@ -2862,11 +2858,11 @@ func (s *OssClientSuite) HttpLogSignUrlTestFunc(c *C, authVersion AuthVersionTyp
 	f.Close()
 
 	// read log file,get http info
-	contents, err := ioutil.ReadFile(logName)
+	contents, err := os.ReadFile(logName)
 	c.Assert(err, IsNil)
 
 	httpContent := string(contents)
-	//fmt.Println(httpContent)
+	// fmt.Println(httpContent)
 
 	c.Assert(strings.Contains(httpContent, "signStr"), Equals, true)
 	c.Assert(strings.Contains(httpContent, "Method:"), Equals, true)
@@ -3740,7 +3736,7 @@ func (s *OssClientSuite) TestClientSetLocalIpError(c *C) {
 }
 
 func (s *OssClientSuite) TestClientSetLocalIpSuccess(c *C) {
-	//get local ip
+	// get local ip
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	c.Assert(err, IsNil)
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
@@ -3877,7 +3873,7 @@ func (s *OssClientSuite) TestSetBucketInventory(c *C) {
 	err = client.SetBucketInventory(bucketName, invConfig)
 	c.Assert(err, IsNil)
 
-	//case 4: use two type encryption
+	// case 4: use two type encryption
 	invConfig.Id = "report4"
 	invEncryption.SseKms = &invSseKms
 	invEncryption.SseOss = &invSseOss
@@ -4226,7 +4222,7 @@ func (s *OssClientSuite) TestClientOptionHeader(c *C) {
 	c.Assert(versioningResult.Status, Equals, "Enabled")
 	c.Assert(GetRequestId(respHeader) != "", Equals, true)
 
-	//list buckets,use payer
+	// list buckets,use payer
 	_, err = client.ListBuckets(options...)
 	c.Assert(err, IsNil)
 
@@ -4302,7 +4298,7 @@ func (s *OssClientSuite) TestClientRedirect(c *C) {
 	resp, err = client2.Conn.client.Get(url)
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	c.Assert(string(data), Equals, "You have been redirected here!")
 	resp.Body.Close()
 
@@ -4345,7 +4341,7 @@ func (s *OssClientSuite) TestClientSkipVerifyCertificateTestServer(c *C) {
 	resp, err := client1.Conn.client.Get(url)
 	c.Assert(err, IsNil)
 	c.Assert(resp.StatusCode, Equals, 200)
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	c.Assert(string(data), Equals, "verifyCertificatehandler")
 	resp.Body.Close()
 
@@ -5110,7 +5106,7 @@ func (s *OssClientSuite) TestCreateBucketXml(c *C) {
 	err = client.CreateBucketXml(bucketName, xmlBody)
 	c.Assert(err, IsNil)
 
-	//check
+	// check
 	bucketInfo, _ := client.GetBucketInfo(bucketName)
 	c.Assert(bucketInfo.BucketInfo.StorageClass, Equals, "IA")
 	err = client.DeleteBucket(bucketName)
@@ -5170,7 +5166,7 @@ func (s *OssClientSuite) TestExtendHttpResponseStatusCode(c *C) {
 	testEndpoint := httpAddr
 	client, err := New(testEndpoint, accessID, accessKey)
 
-	//emptyBodytargetHandler
+	// emptyBodytargetHandler
 	bucket, err := client.Bucket("empty-body")
 	_, err = bucket.GetObject("empty-body")
 	fmt.Println(err)
@@ -5179,7 +5175,7 @@ func (s *OssClientSuite) TestExtendHttpResponseStatusCode(c *C) {
 	c.Assert(serviceErr.StatusCode, Equals, 309)
 	c.Assert(serviceErr.RequestID, Equals, "123456")
 
-	//serviceErrorBodytargetHandler
+	// serviceErrorBodytargetHandler
 	bucket, err = client.Bucket("service-error")
 	_, err = bucket.GetObject("service-error")
 	serviceErr, isSuc = (err).(ServiceError)
@@ -5187,7 +5183,7 @@ func (s *OssClientSuite) TestExtendHttpResponseStatusCode(c *C) {
 	c.Assert(serviceErr.StatusCode, Equals, 510)
 	c.Assert(serviceErr.RequestID, Equals, "ABCDEF")
 
-	//unkownErrorBodytargetHandler
+	// unkownErrorBodytargetHandler
 	bucket, err = client.Bucket("unkown-error")
 	_, err = bucket.GetObject("unkown-error")
 	serviceErr, isSuc = err.(ServiceError)
@@ -5351,7 +5347,7 @@ func (s *OssClientSuite) TestCloudBoxCreateAndDeleteBucketV1(c *C) {
 	err = client.CreateBucket(bucketNameTest)
 	c.Assert(err, IsNil)
 
-	//sleep 3 seconds after create bucket
+	// sleep 3 seconds after create bucket
 	time.Sleep(timeoutInOperation)
 
 	// verify bucket is exist
@@ -5389,7 +5385,7 @@ func (s *OssClientSuite) TestCloudBoxCreateAndDeleteBucketV4(c *C) {
 	err = client.CreateBucket(bucketNameTest)
 	c.Assert(err, IsNil)
 
-	//sleep 3 seconds after create bucket
+	// sleep 3 seconds after create bucket
 	time.Sleep(timeoutInOperation)
 
 	// verify bucket is exist

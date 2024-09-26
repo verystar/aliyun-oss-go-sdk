@@ -3,7 +3,7 @@ package oss
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"os"
 	"strconv"
@@ -172,7 +172,7 @@ func (cs *OssCredentialBucketSuite) TestReqerPaymentWithRequester(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	c.Assert(string(data), Equals, objectValue)
 
@@ -211,7 +211,7 @@ func (cs *OssCredentialBucketSuite) TestOwnerPaymentNoRequester(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	c.Assert(string(data), Equals, objectValue)
 
@@ -250,7 +250,7 @@ func (cs *OssCredentialBucketSuite) TestOwnerPaymentWithRequester(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	c.Assert(string(data), Equals, objectValue)
 

@@ -3,6 +3,7 @@ package oss
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -210,7 +211,7 @@ func (s *OssDownloadSuite) TestDownloadRoutineWithRecovery(c *C) {
 
 	err = s.bucket.DownloadFile(objectName, newFile, 100*1024, Checkpoint(true, newFile+".cp"))
 	c.Assert(err, IsNil)
-	//download success, checkpoint file has been deleted
+	// download success, checkpoint file has been deleted
 	err = dcp.load(newFile + ".cp")
 	c.Assert(err, NotNil)
 
@@ -255,7 +256,7 @@ func (s *OssDownloadSuite) TestDownloadRoutineWithRecovery(c *C) {
 
 	err = s.bucket.DownloadFile(objectName, newFile, 100*1024, CheckpointDir(true, "./"))
 	c.Assert(err, IsNil)
-	//download success, checkpoint file has been deleted
+	// download success, checkpoint file has been deleted
 	err = dcp.load(cpFilePath)
 	c.Assert(err, NotNil)
 
@@ -645,14 +646,14 @@ func compareFilesWithRange(fileL string, offsetL int64, fileR string, offsetR in
 		return false, err
 	}
 	defer finL.Close()
-	finL.Seek(offsetL, os.SEEK_SET)
+	finL.Seek(offsetL, io.SeekStart)
 
 	finR, err := os.Open(fileR)
 	if err != nil {
 		return false, err
 	}
 	defer finR.Close()
-	finR.Seek(offsetR, os.SEEK_SET)
+	finR.Seek(offsetR, io.SeekStart)
 
 	statL, err := finL.Stat()
 	if err != nil {

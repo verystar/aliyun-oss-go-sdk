@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"hash/crc32"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -19,7 +18,6 @@ import (
 //
 // MetaEndFrameCSV 	the csv file meta info
 // error    		it's nil if no error, otherwise it's an error object.
-//
 func (bucket Bucket) CreateSelectCsvObjectMeta(key string, csvMeta CsvMetaRequest, options ...Option) (MetaEndFrameCSV, error) {
 	var endFrame MetaEndFrameCSV
 	params := map[string]interface{}{}
@@ -39,7 +37,7 @@ func (bucket Bucket) CreateSelectCsvObjectMeta(key string, csvMeta CsvMetaReques
 	}
 	defer resp.Body.Close()
 
-	_, err = ioutil.ReadAll(resp)
+	_, err = io.ReadAll(resp)
 
 	return resp.Frame.MetaEndFrameCSV, err
 }
@@ -52,7 +50,6 @@ func (bucket Bucket) CreateSelectCsvObjectMeta(key string, csvMeta CsvMetaReques
 //
 // MetaEndFrameJSON 	the json file meta info
 // error    			it's nil if no error, otherwise it's an error object.
-//
 func (bucket Bucket) CreateSelectJsonObjectMeta(key string, jsonMeta JsonMetaRequest, options ...Option) (MetaEndFrameJSON, error) {
 	var endFrame MetaEndFrameJSON
 	params := map[string]interface{}{}
@@ -71,7 +68,7 @@ func (bucket Bucket) CreateSelectJsonObjectMeta(key string, jsonMeta JsonMetaReq
 	}
 	defer resp.Body.Close()
 
-	_, err = ioutil.ReadAll(resp)
+	_, err = io.ReadAll(resp)
 
 	return resp.Frame.MetaEndFrameJSON, err
 }
@@ -84,7 +81,6 @@ func (bucket Bucket) CreateSelectJsonObjectMeta(key string, jsonMeta JsonMetaReq
 //
 // o.ReadCloser 	reader instance for reading data from response. It must be called close() after the usage and only valid when error is nil.
 // error    		it's nil if no error, otherwise it's an error object.
-//
 func (bucket Bucket) SelectObject(key string, selectReq SelectRequest, options ...Option) (io.ReadCloser, error) {
 	params := map[string]interface{}{}
 	if selectReq.InputSerializationSelect.JsonBodyInput.JsonIsEmpty() {
@@ -120,7 +116,6 @@ func (bucket Bucket) SelectObject(key string, selectReq SelectRequest, options .
 //
 // SelectObjectResponse 	the response of select object.
 // error    			it's nil if no error, otherwise it's an error object.
-//
 func (bucket Bucket) DoPostSelectObject(key string, params map[string]interface{}, buf *bytes.Buffer, options ...Option) (*SelectObjectResponse, error) {
 	resp, err := bucket.do("POST", key, params, options, buf, nil)
 	if err != nil {
@@ -157,7 +152,6 @@ func (bucket Bucket) DoPostSelectObject(key string, params map[string]interface{
 // options 		the options for select file of the object.
 //
 // error    	it's nil if no error, otherwise it's an error object.
-//
 func (bucket Bucket) SelectObjectIntoFile(key, fileName string, selectReq SelectRequest, options ...Option) error {
 	tempFilePath := fileName + TempFileSuffix
 

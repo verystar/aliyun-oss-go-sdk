@@ -2,7 +2,6 @@ package oss
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -136,7 +135,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectIsEmpty(c *C) {
 	p1 := make([]byte, 3)
 	_, err = body.Read(p1)
 	c.Assert(err, IsNil)
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readCsvIsEmpty(localCsvFile)
 	c.Assert(err, IsNil)
@@ -191,9 +190,9 @@ func (s *OssSelectCsvSuite) TestSelectObjectIntoFile(c *C) {
 	fd2, err := os.Open(localCsvFile)
 	c.Assert(err, IsNil)
 	defer fd2.Close()
-	str1, err := ioutil.ReadAll(fd1)
+	str1, err := io.ReadAll(fd1)
 	c.Assert(err, IsNil)
-	str2, err := ioutil.ReadAll(fd2)
+	str2, err := io.ReadAll(fd2)
 	c.Assert(err, IsNil)
 	c.Assert(string(str1), Equals, string(str2))
 
@@ -219,7 +218,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRange(c *C) {
 	body, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer body.Close()
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 
 	str, err := readCsvRange(localCsvFile, 0, 2)
 	c.Assert(err, IsNil)
@@ -240,7 +239,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectLike(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	str, err := readCsvLike(localCsvFile)
 	c.Assert(err, IsNil)
@@ -261,7 +260,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectIntAggregation(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 
 	c.Assert(string(ts), Equals, "2015,2015,2015\n")
@@ -281,7 +280,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectFloatAggregation(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	strR := string(ts)
 	c.Assert(err, IsNil)
 
@@ -314,7 +313,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectConcat(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 
 	str, err := readCsvConcat(localCsvFile)
@@ -348,7 +347,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectComplicateConcat(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 
 	str, err := readCsvComplicateCondition(localCsvFile)
@@ -394,7 +393,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectInvalidSql(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	_, err = ioutil.ReadAll(ret)
+	_, err = io.ReadAll(ret)
 	c.Assert(err, IsNil)
 
 	err = s.bucket.DeleteObject(key)
@@ -414,7 +413,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithOutputDelimiters(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "abc|def\r\n")
 
@@ -435,7 +434,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithCrc(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, content)
 
@@ -455,7 +454,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithSkipPartialData(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "abc,def\n")
 
@@ -476,7 +475,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithOutputRaw(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "abc\n")
 
@@ -497,7 +496,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithKeepColumns(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "abc,\n")
 
@@ -519,7 +518,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectWithOutputHeader(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq)
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "name\nabc\n")
 
@@ -550,7 +549,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRead(c *C) {
 		c.Assert(err, IsNil)
 	}
 	c.Assert(string(p[:n]), Equals, "name\nabc\n")
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "")
 
@@ -563,7 +562,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRead(c *C) {
 		c.Assert(err, IsNil)
 	}
 	c.Assert(string(p[:n]), Equals, "name\nabc\n")
-	ts, err = ioutil.ReadAll(ret)
+	ts, err = io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "")
 
@@ -576,7 +575,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRead(c *C) {
 		c.Assert(err, IsNil)
 	}
 	c.Assert(string(p[:n]), Equals, "name\nab")
-	ts, err = ioutil.ReadAll(ret)
+	ts, err = io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "c\n")
 
@@ -589,7 +588,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRead(c *C) {
 		c.Assert(err, IsNil)
 	}
 	c.Assert(string(p[:n]), Equals, "name\n")
-	ts, err = ioutil.ReadAll(ret)
+	ts, err = io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "abc\n")
 
@@ -602,7 +601,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectRead(c *C) {
 		c.Assert(err, IsNil)
 	}
 	c.Assert(string(p[:n]), Equals, "nam")
-	ts, err = ioutil.ReadAll(ret)
+	ts, err = io.ReadAll(ret)
 	c.Assert(err, IsNil)
 	c.Assert(string(ts), Equals, "e\nabc\n")
 
@@ -640,7 +639,7 @@ func (s *OssSelectCsvSuite) TestSelectCsvObjectConcatProgress(c *C) {
 	ret, err := s.bucket.SelectObject(key, selReq, Progress(&OssSelectProgressListener{}))
 	c.Assert(err, IsNil)
 	defer ret.Close()
-	ts, err := ioutil.ReadAll(ret)
+	ts, err := io.ReadAll(ret)
 	c.Assert(err, IsNil)
 
 	str, err := readCsvConcat(localCsvFile)

@@ -3,7 +3,7 @@ package sample
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketReplicationSample  how to set, get or delete the bucket replication.
@@ -95,7 +95,7 @@ func BucketReplicationSample() {
 	}
 
 	var repResult oss.GetBucketReplicationResult
-	err = xml.Unmarshal([]byte(stringData),&repResult)
+	err = xml.Unmarshal([]byte(stringData), &repResult)
 	if err != nil {
 		HandleError(err)
 	}
@@ -140,7 +140,7 @@ func BucketReplicationSample() {
 	}
 
 	var repLocation oss.GetBucketReplicationLocationResult
-	err = xml.Unmarshal([]byte(stringData),&repLocation)
+	err = xml.Unmarshal([]byte(stringData), &repLocation)
 	if err != nil {
 		HandleError(err)
 	}
@@ -164,7 +164,7 @@ func BucketReplicationSample() {
 		HandleError(err)
 	}
 	var repProgress oss.GetBucketReplicationProgressResult
-	err = xml.Unmarshal([]byte(stringData),&repProgress)
+	err = xml.Unmarshal([]byte(stringData), &repProgress)
 	if err != nil {
 		HandleError(err)
 	}

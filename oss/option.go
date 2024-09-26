@@ -3,7 +3,7 @@ package oss
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -723,7 +723,7 @@ func setBody(options []Option, resp *Response) error {
 	respBody, _ := FindOption(options, responseBody, nil)
 	if respBody != nil && resp != nil {
 		pRespBody := respBody.(*[]byte)
-		pBody, err := ioutil.ReadAll(resp.Body)
+		pBody, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}

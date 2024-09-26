@@ -2,9 +2,9 @@ package sample
 
 import (
 	"fmt"
-	"io/ioutil"
-	
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"io"
+
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // SelectObjectSample shows how to get data from csv/json object by sql
@@ -42,7 +42,7 @@ func SelectObjectSample() {
 	}
 	defer body.Close()
 
-	databyte, err := ioutil.ReadAll(body)
+	databyte, err := io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -50,7 +50,7 @@ func SelectObjectSample() {
 
 	// case 2: Like
 	selReq = oss.SelectRequest{}
-	selReq.Expression =  "select Year, StateAbbr, CityName, Short_Question_Text from ossobject where Measure like '%blood pressure%Years'"
+	selReq.Expression = "select Year, StateAbbr, CityName, Short_Question_Text from ossobject where Measure like '%blood pressure%Years'"
 	selReq.InputSerializationSelect.CsvBodyInput.FileHeaderInfo = "Use"
 	body, err = bucket.SelectObject(objectKey, selReq)
 	if err != nil {
@@ -58,7 +58,7 @@ func SelectObjectSample() {
 	}
 	defer body.Close()
 
-	databyte, err = ioutil.ReadAll(body)
+	databyte, err = io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -80,9 +80,9 @@ func SelectObjectSample() {
 
 	// Create LINES JSON Meta
 	jsonMeta := oss.JsonMetaRequest{
-		InputSerialization: oss.InputSerialization {
-			JSON: oss.JSON {
-				JSONType:"LINES",
+		InputSerialization: oss.InputSerialization{
+			JSON: oss.JSON{
+				JSONType: "LINES",
 			},
 		},
 	}
@@ -104,7 +104,7 @@ func SelectObjectSample() {
 	}
 	defer body.Close()
 
-	databyte, err = ioutil.ReadAll(body)
+	databyte, err = io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -122,7 +122,7 @@ func SelectObjectSample() {
 	}
 	defer body.Close()
 
-	databyte, err = ioutil.ReadAll(body)
+	databyte, err = io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -142,7 +142,7 @@ func SelectObjectSample() {
 		HandleError(err)
 	}
 
-	// case 1: int avg, max, min 
+	// case 1: int avg, max, min
 	selReq = oss.SelectRequest{}
 	selReq.Expression = `
 	select 
@@ -155,14 +155,14 @@ func SelectObjectSample() {
 	`
 	selReq.OutputSerializationSelect.JsonBodyOutput.RecordDelimiter = ","
 	selReq.InputSerializationSelect.JsonBodyInput.JSONType = "Document"
-	
+
 	body, err = bucket.SelectObject(objectKey, selReq)
 	if err != nil {
 		HandleError(err)
 	}
 	defer body.Close()
 
-	databyte, err = ioutil.ReadAll(body)
+	databyte, err = io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -180,19 +180,19 @@ func SelectObjectSample() {
 	`
 	selReq.OutputSerializationSelect.JsonBodyOutput.RecordDelimiter = ","
 	selReq.InputSerializationSelect.JsonBodyInput.JSONType = "Document"
-	
+
 	body, err = bucket.SelectObject(objectKey, selReq)
 	if err != nil {
 		HandleError(err)
 	}
 	defer body.Close()
 
-	databyte, err = ioutil.ReadAll(body)
+	databyte, err = io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
 	fmt.Println("some data in SelectJsonObject result:", string(databyte[:9]))
-	
+
 	// Delete the object and bucket
 	err = DeleteTestBucketAndObject(bucketName)
 	if err != nil {

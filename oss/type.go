@@ -1669,10 +1669,10 @@ type RegionInfoList struct {
 	Regions []RegionInfo `xml:"RegionInfo"`
 }
 
-//PutBucketResponseHeader define the xml of bucket's response header config
+// PutBucketResponseHeader define the xml of bucket's response header config
 type PutBucketResponseHeader ResponseHeaderXml
 
-//GetBucketResponseHeaderResult define the xml of bucket's response header result
+// GetBucketResponseHeaderResult define the xml of bucket's response header result
 type GetBucketResponseHeaderResult ResponseHeaderXml
 
 type ResponseHeaderXml struct {

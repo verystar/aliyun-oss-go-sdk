@@ -2,7 +2,7 @@ package sample
 
 import (
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketRefererSample shows how to set, get and delete the bucket referer.

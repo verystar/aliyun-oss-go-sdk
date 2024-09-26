@@ -5,11 +5,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // PutObjectSample illustrates two methods for uploading a file: simple upload and multipart upload.
@@ -84,7 +85,7 @@ func PutObjectSample() {
 
 	callbackBuffer := bytes.NewBuffer([]byte{})
 	callbackEncoder := json.NewEncoder(callbackBuffer)
-	//do not encode '&' to "\u0026"
+	// do not encode '&' to "\u0026"
 	callbackEncoder.SetEscapeHTML(false)
 	err = callbackEncoder.Encode(callbackMap)
 	if err != nil {
@@ -106,7 +107,7 @@ func PutObjectSample() {
 
 	callbackBuffer = bytes.NewBuffer([]byte{})
 	callbackEncoder = json.NewEncoder(callbackBuffer)
-	//do not encode '&' to "\u0026"
+	// do not encode '&' to "\u0026"
 	callbackEncoder.SetEscapeHTML(false)
 	err = callbackEncoder.Encode(callbackMap)
 	if err != nil {
@@ -154,11 +155,11 @@ func PutObjectSample() {
 
 	// Case 8-1:Big file's multipart upload. Set callback and get callback body
 
-	//The local file is partitioned, and the number of partitions is specified as 3.
+	// The local file is partitioned, and the number of partitions is specified as 3.
 	chunks, err := oss.SplitFileByPartNum(localFile, 3)
 	fd, err = os.Open(localFile)
 	defer fd.Close()
-	//Specify the expiration time.
+	// Specify the expiration time.
 	expires := time.Date(2049, time.January, 10, 23, 0, 0, 0, time.UTC)
 	// If you need to set the request header when initializing fragmentation, please refer to the following example code.
 	options = []oss.Option{
@@ -180,7 +181,7 @@ func PutObjectSample() {
 	// Step 2: upload fragments.
 	var parts []oss.UploadPart
 	for _, chunk := range chunks {
-		fd.Seek(chunk.Offset, os.SEEK_SET)
+		fd.Seek(chunk.Offset, io.SeekStart)
 		// Call the uploadpart method to upload each fragment.
 		part, err := bucket.UploadPart(imur, fd, chunk.Size, chunk.Number)
 		if err != nil {
@@ -197,7 +198,7 @@ func PutObjectSample() {
 
 	callbackBuffer = bytes.NewBuffer([]byte{})
 	callbackEncoder = json.NewEncoder(callbackBuffer)
-	//do not encode '&' to "\u0026"
+	// do not encode '&' to "\u0026"
 	callbackEncoder.SetEscapeHTML(false)
 	err = callbackEncoder.Encode(callbackMap)
 	if err != nil {

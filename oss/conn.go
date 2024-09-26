@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -188,7 +187,7 @@ func (conn Conn) DoURLWithContext(ctx context.Context, method HTTPMethod, signed
 	}
 
 	if conn.config.LogLevel >= Debug {
-		//print out http resp
+		// print out http resp
 		conn.LoggerHTTPResp(req, resp)
 	}
 
@@ -384,7 +383,7 @@ func (conn Conn) doRequest(ctx context.Context, method string, uri *url.URL, can
 	}
 
 	if conn.config.LogLevel >= Debug {
-		//print out http resp
+		// print out http resp
 		conn.LoggerHTTPResp(req, resp)
 	}
 
@@ -538,7 +537,7 @@ func (conn Conn) handleBody(req *http.Request, body io.Reader, initCRC uint64,
 	// HTTP body
 	rc, ok := reader.(io.ReadCloser)
 	if !ok && reader != nil {
-		rc = ioutil.NopCloser(reader)
+		rc = io.NopCloser(reader)
 	}
 
 	if conn.isUploadLimitReq(req) {
@@ -616,7 +615,7 @@ func (conn Conn) handleResponse(resp *http.Response, crc hash.Hash64) (*Response
 			return &Response{
 				StatusCode: resp.StatusCode,
 				Headers:    resp.Header,
-				Body:       ioutil.NopCloser(bytes.NewReader(respBody)), // restore the body
+				Body:       io.NopCloser(bytes.NewReader(respBody)), // restore the body
 			}, err
 		} else if statusCode >= 300 && statusCode <= 307 {
 			// OSS use 3xx, but response has no body
@@ -633,7 +632,7 @@ func (conn Conn) handleResponse(resp *http.Response, crc hash.Hash64) (*Response
 			var errorXml []byte
 			respBody, err := readResponseBody(resp)
 			if err != nil {
-				return &Response{StatusCode: resp.StatusCode, Headers: resp.Header, Body: ioutil.NopCloser(bytes.NewReader(respBody))}, err
+				return &Response{StatusCode: resp.StatusCode, Headers: resp.Header, Body: io.NopCloser(bytes.NewReader(respBody))}, err
 			}
 			errorXml = respBody
 			if len(respBody) == 0 && len(resp.Header.Get(HTTPHeaderOssErr)) > 0 {
@@ -664,7 +663,7 @@ func (conn Conn) handleResponse(resp *http.Response, crc hash.Hash64) (*Response
 			return &Response{
 				StatusCode: resp.StatusCode,
 				Headers:    resp.Header,
-				Body:       ioutil.NopCloser(bytes.NewReader(respBody)), // restore the body
+				Body:       io.NopCloser(bytes.NewReader(respBody)), // restore the body
 			}, err
 		}
 	} else {
@@ -748,20 +747,20 @@ func (conn Conn) LoggerHTTPResp(req *http.Request, resp *http.Response) {
 func calcMD5(body io.Reader, contentLen, md5Threshold int64) (reader io.Reader, b64 string, tempFile *os.File, err error) {
 	if contentLen == 0 || contentLen > md5Threshold {
 		// Huge body, use temporary file
-		tempFile, err = ioutil.TempFile(os.TempDir(), TempFilePrefix)
+		tempFile, err = os.CreateTemp(os.TempDir(), TempFilePrefix)
 		if tempFile != nil {
 			io.Copy(tempFile, body)
-			tempFile.Seek(0, os.SEEK_SET)
+			tempFile.Seek(0, io.SeekStart)
 			md5 := md5.New()
 			io.Copy(md5, tempFile)
 			sum := md5.Sum(nil)
 			b64 = base64.StdEncoding.EncodeToString(sum[:])
-			tempFile.Seek(0, os.SEEK_SET)
+			tempFile.Seek(0, io.SeekStart)
 			reader = tempFile
 		}
 	} else {
 		// Small body, use memory
-		buf, _ := ioutil.ReadAll(body)
+		buf, _ := io.ReadAll(body)
 		sum := md5.Sum(buf)
 		b64 = base64.StdEncoding.EncodeToString(sum[:])
 		reader = bytes.NewReader(buf)
@@ -771,7 +770,7 @@ func calcMD5(body io.Reader, contentLen, md5Threshold int64) (reader io.Reader, 
 
 func readResponseBody(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
-	out, err := ioutil.ReadAll(resp.Body)
+	out, err := io.ReadAll(resp.Body)
 	if err == io.EOF {
 		err = nil
 	}
@@ -792,7 +791,7 @@ func serviceErrFromXML(body []byte, statusCode int, requestID string) (ServiceEr
 }
 
 func xmlUnmarshal(body io.Reader, v interface{}) error {
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -800,7 +799,7 @@ func xmlUnmarshal(body io.Reader, v interface{}) error {
 }
 
 func jsonUnmarshal(body io.Reader, v interface{}) error {
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	if err != nil {
 		return err
 	}
@@ -894,7 +893,7 @@ func (um *urlMaker) InitExt(endpoint string, isCname bool, isProxy bool, isPathS
 		um.NetLoc = endpoint
 	}
 
-	//use url.Parse() to get real host
+	// use url.Parse() to get real host
 	strUrl := um.Scheme + "://" + um.NetLoc
 	url, err := url.Parse(strUrl)
 	if err != nil {

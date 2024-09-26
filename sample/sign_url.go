@@ -2,11 +2,11 @@ package sample
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // SignURLSample signs URL sample
@@ -58,7 +58,7 @@ func SignURLSample() {
 	defer body.Close()
 
 	// Read content
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(-1)

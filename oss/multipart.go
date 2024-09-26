@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -86,7 +85,7 @@ func (bucket Bucket) UploadPartFromFile(imur InitiateMultipartUploadResult, file
 		return part, err
 	}
 	defer fd.Close()
-	fd.Seek(startPosition, os.SEEK_SET)
+	fd.Seek(startPosition, io.SeekStart)
 
 	request := &UploadPartRequest{
 		InitResult: &imur,
@@ -154,7 +153,7 @@ func (bucket Bucket) UploadPartCopy(imur InitiateMultipartUploadResult, srcBucke
 	var part UploadPart
 	var opts []Option
 
-	//first find version id
+	// first find version id
 	versionIdKey := "versionId"
 	versionId, _ := FindOption(options, versionIdKey, nil)
 	if versionId == nil {
@@ -215,7 +214,7 @@ func (bucket Bucket) CompleteMultipartUpload(imur InitiateMultipartUploadResult,
 		return out, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return out, err
 	}

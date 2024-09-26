@@ -4,7 +4,7 @@ package oss
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"os"
 	"strings"
@@ -374,7 +374,7 @@ func (s *OssProgressSuite) TestMultipartUpload(c *C) {
 	// UploadPart
 	var parts []UploadPart
 	for _, chunk := range chunks {
-		fd.Seek(chunk.Offset, os.SEEK_SET)
+		fd.Seek(chunk.Offset, io.SeekStart)
 		part, err := s.bucket.UploadPart(imur, fd, chunk.Size, chunk.Number, Progress(&progressListener))
 		c.Assert(err, IsNil)
 		parts = append(parts, part)
@@ -444,7 +444,7 @@ func (s *OssProgressSuite) TestGetObject(c *C) {
 	progressListener.TotalRwBytes = 0
 	body, err := s.bucket.GetObject(objectName, Progress(&progressListener))
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadAll(body)
+	_, err = io.ReadAll(body)
 	c.Assert(err, IsNil)
 	body.Close()
 	c.Assert(progressListener.TotalRwBytes, Equals, fileInfo.Size())
@@ -461,7 +461,7 @@ func (s *OssProgressSuite) TestGetObject(c *C) {
 	options := []Option{Progress(&progressListener)}
 	result, err := s.bucket.DoGetObject(request, options)
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadAll(result.Response.Body)
+	_, err = io.ReadAll(result.Response.Body)
 	c.Assert(err, IsNil)
 	result.Response.Body.Close()
 	c.Assert(progressListener.TotalRwBytes, Equals, fileInfo.Size())
@@ -470,7 +470,7 @@ func (s *OssProgressSuite) TestGetObject(c *C) {
 	progressListener.TotalRwBytes = 0
 	body, err = s.bucket.GetObject(objectName, Range(1024, 4*1024), Progress(&progressListener))
 	c.Assert(err, IsNil)
-	text, err := ioutil.ReadAll(body)
+	text, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	body.Close()
 	c.Assert(progressListener.TotalRwBytes, Equals, int64(len(text)))
@@ -485,7 +485,7 @@ func (s *OssProgressSuite) TestGetObject(c *C) {
 	progressListener.TotalRwBytes = 0
 	body, err = s.bucket.GetObject(objectName, Progress(&progressListener))
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadAll(body)
+	_, err = io.ReadAll(body)
 	c.Assert(err, IsNil)
 	body.Close()
 	c.Assert(progressListener.TotalRwBytes, Equals, int64(0))
@@ -510,7 +510,7 @@ func (s *OssProgressSuite) TestGetObjectNegative(c *C) {
 	n, err := body.Read(buf)
 	c.Assert(err, IsNil)
 
-	//time.Sleep(70 * time.Second) TODO
+	// time.Sleep(70 * time.Second) TODO
 
 	// Read should fail
 	for err == nil {

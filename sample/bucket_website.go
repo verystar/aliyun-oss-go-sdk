@@ -3,7 +3,7 @@ package sample
 import (
 	"fmt"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketWebsiteSample shows how to set, get and delete the bucket website.
@@ -20,7 +20,7 @@ func BucketWebsiteSample() {
 		HandleError(err)
 	}
 
-	//Define bucket website indexWebsite or errorWebsite
+	// Define bucket website indexWebsite or errorWebsite
 	var indexWebsite = "myindex.html"
 	var errorWebsite = "myerror.html"
 

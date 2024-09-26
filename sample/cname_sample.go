@@ -2,10 +2,10 @@ package sample
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // CnameSample shows the cname usage
@@ -59,7 +59,7 @@ func CnameSample() {
 	if err != nil {
 		HandleError(err)
 	}
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		HandleError(err)

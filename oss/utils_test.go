@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -295,7 +294,7 @@ func (s *OssUtilsSuite) TestGetRangeString(c *C) {
 }
 
 func (s *OssUtilsSuite) TestLimitReadCloser(c *C) {
-	//test LimitReadCloser
+	// test LimitReadCloser
 	str := RandStr(1024)
 	r := strings.NewReader(str)
 	lrc := LimitReadCloser(r, 1024)
@@ -305,10 +304,10 @@ func (s *OssUtilsSuite) TestLimitReadCloser(c *C) {
 	c.Assert(n, Equals, 1024)
 	c.Assert(err, IsNil)
 
-	//test DiscardReadCloser
+	// test DiscardReadCloser
 	r = strings.NewReader(str)
 	drc := DiscardReadCloser{
-		RC:      ioutil.NopCloser(r),
+		RC:      io.NopCloser(r),
 		Discard: 100,
 	}
 	n, err = drc.Read(rb)
@@ -343,7 +342,7 @@ func (s *OssUtilsSuite) TestCheckObjectNameEx(c *C) {
 }
 
 func (s *OssUtilsSuite) TestisVerifyObjectStrict(c *C) {
-	//default
+	// default
 	config := getDefaultOssConfig()
 	flag := isVerifyObjectStrict(config)
 	c.Assert(true, Equals, flag)
@@ -456,14 +455,14 @@ func (s *OssUtilsSuite) TestGetReaderLen(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(int64(len(data)-2), Equals, n)
 
-	//io.LimitedReader
+	// io.LimitedReader
 	b = bytes.NewBuffer([]byte(data))
 	lr := io.LimitReader(b, 3)
 	n, err = GetReaderLen(lr)
 	c.Assert(err, IsNil)
 	c.Assert(int64(3), Equals, n)
 
-	//LimitedReadCloser
+	// LimitedReadCloser
 	b = bytes.NewBuffer([]byte(data))
 	lrc := LimitReadCloser(b, 4)
 	n, err = GetReaderLen(lrc)
@@ -482,14 +481,14 @@ func (s *OssUtilsSuite) TestGetReaderLen(c *C) {
 	c.Assert(err.Error(), Equals, "can't get reader content length,unkown reader type")
 	c.Assert(int64(0), Equals, n)
 
-	//has not Len() , Seek(), N
+	// has not Len() , Seek(), N
 	b = bytes.NewBuffer([]byte(data))
 	bc := io.NopCloser(b)
 	n, err = GetReaderLen(bc)
 	c.Assert(err.Error(), Equals, "can't get reader content length,unkown reader type")
 	c.Assert(int64(0), Equals, n)
 
-	//Seek error
+	// Seek error
 	sef := &seekerReaderStub{
 		r: f,
 	}

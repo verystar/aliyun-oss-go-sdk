@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,7 +22,6 @@ import (
 // options    the options for uploading object.
 //
 // error    it's nil if the operation succeeds, otherwise it's an error object.
-//
 func (bucket Bucket) UploadFile(objectKey, filePath string, partSize int64, options ...Option) error {
 	if partSize < MinPartSize || partSize > MaxPartSize {
 		return errors.New("oss: part size invalid range (100KB, 5GB]")
@@ -273,14 +271,14 @@ func (bucket Bucket) uploadFile(objectKey, filePath string, partSize int64, opti
 const uploadCpMagic = "FE8BB4EA-B593-4FAC-AD7A-2459A36E2E62"
 
 type uploadCheckpoint struct {
-	Magic     string   // Magic
-	MD5       string   // Checkpoint file content's MD5
-	FilePath  string   // Local file path
-	FileStat  cpStat   // File state
-	ObjectKey string   // Key
-	UploadID  string   // Upload ID
-	Parts     []cpPart // All parts of the local file
-	CallbackVal string
+	Magic        string   // Magic
+	MD5          string   // Checkpoint file content's MD5
+	FilePath     string   // Local file path
+	FileStat     cpStat   // File state
+	ObjectKey    string   // Key
+	UploadID     string   // Upload ID
+	Parts        []cpPart // All parts of the local file
+	CallbackVal  string
 	CallbackBody *[]byte
 }
 
@@ -297,14 +295,14 @@ type cpPart struct {
 }
 
 // isValid checks if the uploaded data is valid---it's valid when the file is not updated and the checkpoint data is valid.
-func (cp uploadCheckpoint) isValid(filePath string,options []Option) (bool, error) {
+func (cp uploadCheckpoint) isValid(filePath string, options []Option) (bool, error) {
 
 	callbackVal, _ := FindOption(options, HTTPHeaderOssCallback, "")
 	if callbackVal != "" && cp.CallbackVal != callbackVal {
 		return false, nil
 	}
 	callbackBody, _ := FindOption(options, responseBody, nil)
-	if callbackBody != nil{
+	if callbackBody != nil {
 		body, _ := json.Marshal(callbackBody)
 		if bytes.Equal(*cp.CallbackBody, body) {
 			return false, nil
@@ -350,7 +348,7 @@ func (cp uploadCheckpoint) isValid(filePath string,options []Option) (bool, erro
 
 // load loads from the file
 func (cp *uploadCheckpoint) load(filePath string) error {
-	contents, err := ioutil.ReadFile(filePath)
+	contents, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -380,7 +378,7 @@ func (cp *uploadCheckpoint) dump(filePath string) error {
 	}
 
 	// Dump
-	return ioutil.WriteFile(filePath, js, FilePermMode)
+	return os.WriteFile(filePath, js, FilePermMode)
 }
 
 // updatePart updates the part status
@@ -448,7 +446,7 @@ func prepare(cp *uploadCheckpoint, objectKey, filePath string, partSize int64, b
 	callbackVal, _ := FindOption(options, HTTPHeaderOssCallback, "")
 	cp.CallbackVal = callbackVal.(string)
 	callbackBody, _ := FindOption(options, responseBody, nil)
-	if callbackBody != nil  {
+	if callbackBody != nil {
 		body, _ := json.Marshal(callbackBody)
 		cp.CallbackBody = &body
 	}
@@ -487,7 +485,7 @@ func complete(cp *uploadCheckpoint, bucket *Bucket, parts []UploadPart, cpFilePa
 
 	_, err := bucket.CompleteMultipartUpload(imur, parts, options...)
 	if err != nil {
-		if e, ok := err.(ServiceError);ok && (e.StatusCode == 203 || e.StatusCode == 404) {
+		if e, ok := err.(ServiceError); ok && (e.StatusCode == 203 || e.StatusCode == 404) {
 			os.Remove(cpFilePath)
 		}
 		return err
@@ -511,7 +509,7 @@ func (bucket Bucket) uploadFileWithCp(objectKey, filePath string, partSize int64
 	}
 
 	// Load error or the CP data is invalid.
-	valid, err := ucp.isValid(filePath,options)
+	valid, err := ucp.isValid(filePath, options)
 	if err != nil || !valid {
 		if err = prepare(&ucp, objectKey, filePath, partSize, &bucket, options); err != nil {
 			return err

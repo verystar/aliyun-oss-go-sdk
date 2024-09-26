@@ -3,7 +3,7 @@ package sample
 import (
 	"fmt"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketLifecycleSample shows how to set, get and delete bucket's lifecycle.

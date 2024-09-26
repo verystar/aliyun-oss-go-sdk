@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // GetObjectSample shows the streaming download, range download and resumable download.
@@ -30,7 +29,7 @@ func GetObjectSample() {
 		HandleError(err)
 	}
 
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	body.Close()
 	if err != nil {
 		HandleError(err)
@@ -42,7 +41,7 @@ func GetObjectSample() {
 	if err != nil {
 		HandleError(err)
 	}
-	data, err = ioutil.ReadAll(body)
+	data, err = io.ReadAll(body)
 	body.Close()
 	fmt.Println("the range of data is: ", string(data))
 

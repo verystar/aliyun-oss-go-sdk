@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketCnameSample shows how to get,put,list or delete the bucket cname.

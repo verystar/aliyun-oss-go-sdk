@@ -9,7 +9,6 @@ import (
 	"hash"
 	"hash/crc64"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -25,7 +24,6 @@ import (
 // options    object's constraints, check out GetObject for the reference.
 //
 // error    it's nil when the call succeeds, otherwise it's an error object.
-//
 func (bucket Bucket) DownloadFile(objectKey, filePath string, partSize int64, options ...Option) error {
 	if partSize < 1 {
 		return errors.New("oss: part size smaller than 1")
@@ -121,7 +119,7 @@ func downloadWorker(id int, arg downloadWorkerArg, jobs <-chan downloadPart, res
 		if arg.enableCRC {
 			crcCalc = crc64.New(CrcTable())
 			contentLen := part.End - part.Start + 1
-			rd = ioutil.NopCloser(TeeReader(rd, crcCalc, contentLen, nil, nil))
+			rd = io.NopCloser(TeeReader(rd, crcCalc, contentLen, nil, nil))
 		}
 		defer rd.Close()
 
@@ -137,7 +135,7 @@ func downloadWorker(id int, arg downloadWorkerArg, jobs <-chan downloadPart, res
 			break
 		}
 
-		_, err = fd.Seek(part.Start-part.Offset, os.SEEK_SET)
+		_, err = fd.Seek(part.Start-part.Offset, io.SeekStart)
 		if err != nil {
 			fd.Close()
 			failed <- err
@@ -375,7 +373,7 @@ func (cp downloadCheckpoint) isValid(meta http.Header, uRange *UnpackedRange) (b
 
 // load checkpoint from local file
 func (cp *downloadCheckpoint) load(filePath string) error {
-	contents, err := ioutil.ReadFile(filePath)
+	contents, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -405,7 +403,7 @@ func (cp *downloadCheckpoint) dump(filePath string) error {
 	}
 
 	// Dump
-	return ioutil.WriteFile(filePath, js, FilePermMode)
+	return os.WriteFile(filePath, js, FilePermMode)
 }
 
 // todoParts gets unfinished parts

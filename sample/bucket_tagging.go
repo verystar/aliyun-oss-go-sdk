@@ -2,7 +2,7 @@ package sample
 
 import (
 	"fmt"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // BucketTaggingSample shows how to set,get and  the bucket stat.
@@ -33,7 +33,7 @@ func BucketTaggingSample() {
 		HandleError(err)
 	}
 
-	//Get bucket tagging
+	// Get bucket tagging
 	ret, err := client.GetBucketTagging(bucketName)
 	if err != nil {
 		HandleError(err)
@@ -43,7 +43,7 @@ func BucketTaggingSample() {
 		fmt.Printf("Tag Key: %s\n", tag.Key)
 		fmt.Printf("Tag Value: %s\n", tag.Value)
 	}
-	//Delete one tagging
+	// Delete one tagging
 	err = client.DeleteBucketTagging(bucketName, oss.AddParam("tagging", "key1"))
 	if err != nil {
 		HandleError(err)

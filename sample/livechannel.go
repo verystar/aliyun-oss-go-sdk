@@ -2,16 +2,16 @@ package sample
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"time"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/verystar/aliyun-oss-go-sdk/oss"
 )
 
 // CreateLiveChannelSample Samples for create a live-channel
 func CreateLiveChannelSample() {
 	channelName := "create-livechannel"
-	//create bucket
+	// create bucket
 	bucket, err := GetTestBucket(bucketName)
 	if err != nil {
 		HandleError(err)
@@ -19,13 +19,13 @@ func CreateLiveChannelSample() {
 
 	// Case 1 - Create live-channel with Completely configure
 	config := oss.LiveChannelConfiguration{
-		Description: "sample-for-livechannel", //description information, up to 128 bytes
-		Status:      "enabled",                //enabled or disabled
+		Description: "sample-for-livechannel", // description information, up to 128 bytes
+		Status:      "enabled",                // enabled or disabled
 		Target: oss.LiveChannelTarget{
-			Type:         "HLS",                          //the type of object, only supports HLS, required
-			FragDuration: 10,                             //the length of each ts object (in seconds), in the range [1,100], default: 5
-			FragCount:    4,                              //the number of ts objects in the m3u8 object, in the range of [1,100], default: 3
-			PlaylistName: "test-get-channel-status.m3u8", //the name of m3u8 object, which must end with ".m3u8" and the length range is [6,128]，default: playlist.m3u8
+			Type:         "HLS",                          // the type of object, only supports HLS, required
+			FragDuration: 10,                             // the length of each ts object (in seconds), in the range [1,100], default: 5
+			FragCount:    4,                              // the number of ts objects in the m3u8 object, in the range of [1,100], default: 3
+			PlaylistName: "test-get-channel-status.m3u8", // the name of m3u8 object, which must end with ".m3u8" and the length range is [6,128]，default: playlist.m3u8
 		},
 	}
 
@@ -70,7 +70,7 @@ func PutLiveChannelStatusSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -110,7 +110,7 @@ func PostVodPlayListSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type:         "HLS", //the type of object, only supports HLS, required
+			Type:         "HLS", // the type of object, only supports HLS, required
 			PlaylistName: "playlist.m3u8",
 		},
 	}
@@ -120,7 +120,7 @@ func PostVodPlayListSample() {
 		HandleError(err)
 	}
 
-	//This stage you can push live stream, and after that you could generator playlist
+	// This stage you can push live stream, and after that you could generator playlist
 
 	endTime := time.Now().Add(-1 * time.Minute)
 	startTime := endTime.Add(-60 * time.Minute)
@@ -147,7 +147,7 @@ func GetVodPlayListSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type:         "HLS", //the type of object, only supports HLS, required
+			Type:         "HLS", // the type of object, only supports HLS, required
 			PlaylistName: "playlist.m3u8",
 		},
 	}
@@ -157,7 +157,7 @@ func GetVodPlayListSample() {
 		HandleError(err)
 	}
 
-	//This stage you can push live stream, and after that you could generator playlist
+	// This stage you can push live stream, and after that you could generator playlist
 
 	endTime := time.Now().Add(-1 * time.Minute)
 	startTime := endTime.Add(-60 * time.Minute)
@@ -167,7 +167,7 @@ func GetVodPlayListSample() {
 	}
 	defer body.Close()
 
-	data, err := ioutil.ReadAll(body)
+	data, err := io.ReadAll(body)
 	if err != nil {
 		HandleError(err)
 	}
@@ -191,7 +191,7 @@ func GetLiveChannelStatSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -238,7 +238,7 @@ func GetLiveChannelInfoSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -279,7 +279,7 @@ func GetLiveChannelHistorySample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -288,7 +288,7 @@ func GetLiveChannelHistorySample() {
 		HandleError(err)
 	}
 
-	//at most return up to lastest 10 push records
+	// at most return up to lastest 10 push records
 	history, err := bucket.GetLiveChannelHistory(channelName)
 	for _, record := range history.Record {
 		remoteAddr := record.RemoteAddr
@@ -315,7 +315,7 @@ func ListLiveChannelSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -383,7 +383,7 @@ func DeleteLiveChannelSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type: "HLS", //the type of object, only supports HLS, required
+			Type: "HLS", // the type of object, only supports HLS, required
 		},
 	}
 
@@ -416,7 +416,7 @@ func SignRtmpURLSample() {
 
 	config := oss.LiveChannelConfiguration{
 		Target: oss.LiveChannelTarget{
-			Type:         "HLS", //the type of object, only supports HLS, required
+			Type:         "HLS", // the type of object, only supports HLS, required
 			PlaylistName: "playlist.m3u8",
 		},
 	}

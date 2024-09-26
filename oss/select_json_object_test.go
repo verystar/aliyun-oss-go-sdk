@@ -1,7 +1,7 @@
 package oss
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -125,7 +125,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonDocument(c *C) {
 	p1 := make([]byte, 3)
 	_, err = body.Read(p1)
 	c.Assert(err, IsNil)
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonDocument("../sample/sample_json.json")
 	c.Assert(err, IsNil)
@@ -152,7 +152,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonLines(c *C) {
 	requestId := GetRequestId(responseHeader)
 	c.Assert(len(requestId) > 0, Equals, true)
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonDocument("../sample/sample_json.json")
 	c.Assert(string(rets), Equals, escaped_slashs(str))
@@ -252,7 +252,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonLinesLike(c *C) {
 	requestId := GetRequestId(responseHeader)
 	c.Assert(len(requestId) > 0, Equals, true)
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonLinesLike("../sample/sample_json.json")
 	c.Assert(string(rets), Equals, str)
@@ -290,7 +290,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonLinesRange(c *C) {
 	requestId := GetRequestId(responseHeader)
 	c.Assert(len(requestId) > 0, Equals, true)
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonLinesRange("../sample/sample_json.json", 0, 2)
 	c.Assert(string(rets), Equals, escaped_slashs(str))
@@ -321,7 +321,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonDocumentIntAggregation(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	c.Assert(string(rets), Equals, "{\"_1\":1011723,\"_2\":1011723,\"_3\":1011723},")
 
@@ -349,7 +349,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonDocumentFloatAggregation(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	testLogger.Println(string(rets))
 	// avg, max, min, err := readJsonFloatAggregation("../sample/sample_json.json")
@@ -398,7 +398,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonDocumentConcat(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonDocumentConcat("../sample/sample_json.json")
 	c.Assert(err, IsNil)
@@ -432,7 +432,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonComplicateConcat(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	str, err := readJsonComplicateConcat("../sample/sample_json.json")
 	c.Assert(err, IsNil)
@@ -503,7 +503,7 @@ func (s *OssSelectJsonSuite) TestSelectJsonParseNumAsString(c *C) {
 	c.Assert(err, IsNil)
 	defer body.Close()
 
-	rets, err := ioutil.ReadAll(body)
+	rets, err := io.ReadAll(body)
 	c.Assert(err, IsNil)
 	c.Assert(string(rets), Equals, "{\"a\":123456789.123456789}\n")
 

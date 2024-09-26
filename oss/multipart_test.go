@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"io"
 	"math/rand"
 	"net/http"
 	"os"
@@ -178,7 +179,7 @@ func (s *OssBucketMultipartSuite) TestMultipartUpload(c *C) {
 	c.Assert(err, IsNil)
 	var parts []UploadPart
 	for _, chunk := range chunks {
-		fd.Seek(chunk.Offset, os.SEEK_SET)
+		fd.Seek(chunk.Offset, io.SeekStart)
 		part, err := s.bucket.UploadPart(imur, fd, chunk.Size, chunk.Number)
 		c.Assert(err, IsNil)
 		parts = append(parts, part)
@@ -635,7 +636,7 @@ func (s *OssBucketMultipartSuite) TestListMultipartUploads(c *C) {
 		}
 	}
 	c.Assert(len(lmpu.Uploads), Equals, checkNum)
-	//testLogger.Println("UploadIDMarker", lmpu.Uploads)
+	// testLogger.Println("UploadIDMarker", lmpu.Uploads)
 
 	for _, imur := range imurs {
 		err = s.bucket.AbortMultipartUpload(imur)

@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"hash/crc64"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"strings"
@@ -213,7 +212,7 @@ func (s *OssCrcSuite) TestCRCRepeatedCombine(c *C) {
 		post := hash.Sum64()
 
 		crc := CRC64Combine(prev, post, uint64(len(str)-i))
-		//testLogger.Println("TestCRCRepeatedCombine:", prev, post, crc, i, len(str))
+		// testLogger.Println("TestCRCRepeatedCombine:", prev, post, crc, i, len(str))
 		c.Assert(crc == 0x7AD25FAFA1710407, Equals, true)
 	}
 }
@@ -223,7 +222,7 @@ func (s *OssCrcSuite) TestCRCRandomCombine(c *C) {
 	tab := crc64.MakeTable(crc64.ECMA)
 	fileName := "../sample/BingWallpaper-2015-11-07.jpg"
 
-	body, err := ioutil.ReadFile(fileName)
+	body, err := os.ReadFile(fileName)
 	c.Assert(err, IsNil)
 
 	for i := 0; i < 10; i++ {
@@ -237,7 +236,7 @@ func (s *OssCrcSuite) TestCRCRandomCombine(c *C) {
 			crc = CRC64Combine(crc, calc.Sum64(), (uint64)(part.Size))
 		}
 
-		//testLogger.Println("TestCRCRandomCombine:", crc, i, fileParts)
+		// testLogger.Println("TestCRCRandomCombine:", crc, i, fileParts)
 		c.Assert(crc == 0x2B612D24FFF64222, Equals, true)
 	}
 }
@@ -261,7 +260,7 @@ func (s *OssCrcSuite) TestEnableCRCAndMD5(c *C) {
 	// GetObject
 	body, err := bucket.GetObject(objectName)
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadAll(body)
+	_, err = io.ReadAll(body)
 	c.Assert(err, IsNil)
 	body.Close()
 
@@ -358,7 +357,7 @@ func (s *OssCrcSuite) TestDisableCRCAndMD5(c *C) {
 	// GetObject
 	body, err := bucket.GetObject(objectName)
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadAll(body)
+	_, err = io.ReadAll(body)
 	c.Assert(err, IsNil)
 	body.Close()
 
